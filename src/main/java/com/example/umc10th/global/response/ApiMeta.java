@@ -1,4 +1,4 @@
-package com.example.umc10th.common.response;
+package com.example.umc10th.global.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

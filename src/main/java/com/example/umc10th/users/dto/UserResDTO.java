@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class UserResDTO {
 
     public record GetInfo(
-            String id,
+            Long id,
             String addressCode,
             String name,
             String email,

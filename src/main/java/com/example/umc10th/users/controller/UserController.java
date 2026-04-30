@@ -5,6 +5,7 @@ import com.example.umc10th.global.code.GeneralSuccessCode;
 import com.example.umc10th.global.response.ApiResponse;
 import com.example.umc10th.users.dto.UserReqDTO;
 import com.example.umc10th.users.dto.UserResDTO;
+import com.example.umc10th.users.enums.UserSuccessCode;
 import com.example.umc10th.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +26,7 @@ public class UserController {
 
     @PostMapping("/me")
     public ApiResponse<UserResDTO.GetInfo> me( @RequestBody UserReqDTO.GetInfo reqDTO ) {
-        BaseSuccessCode code = GeneralSuccessCode.OK;
-        return ApiResponse.success( code , userService.getMe(reqDTO.userId().toString()));
+
+        return ApiResponse.success( UserSuccessCode.USER_SUCCESS_FOUND , userService.getMe(reqDTO.userId().toString()));
     }
 }

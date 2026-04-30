@@ -18,15 +18,29 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Users", description = "유저 API")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/me")
-    public ApiResponse<UserResDTO.GetInfo> me( @RequestBody UserReqDTO.GetInfo reqDTO ) {
+    public ApiResponse<UserResDTO.GetInfo> me(@RequestBody UserReqDTO.GetInfo reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_FOUND, userService.getMe(reqDTO.userId()));
+    }
 
-        return ApiResponse.success( UserSuccessCode.USER_SUCCESS_FOUND , userService.getMe(reqDTO.userId().toString()));
+    @PostMapping("/signup")
+    public ApiResponse<UserResDTO.GetInfo> signup(@RequestBody UserReqDTO.Signup reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_SINGUP, userService.signUp(reqDTO));
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<UserResDTO.GetInfo> login(@RequestBody UserReqDTO.Login reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_LOGIN, userService.login(reqDTO));
+    }
+
+    @PatchMapping("/witdraw")
+    public ApiResponse<UserResDTO.GetInfo> withdraw(@RequestBody UserReqDTO.GetInfo reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_WITHDRAW, userService.withdraw(reqDTO.userId()));
     }
 }

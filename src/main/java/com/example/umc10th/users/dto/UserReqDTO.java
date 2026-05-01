@@ -1,5 +1,6 @@
 package com.example.umc10th.users.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,8 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserReqDTO {
 
-   public record GetInfo(Long userId) {}
+    @Schema(name = "UserGetInfoRequest")
+    public record GetInfo(Long userId) {}
 
+    @Schema(name = "UserSignupRequest")
     public record Signup(
             String email,
             String name,
@@ -18,6 +21,7 @@ public class UserReqDTO {
             String addressCode
     ) {}
 
+    @Schema(name = "UserLoginRequest")
     public record Login(
             String email,
             String password

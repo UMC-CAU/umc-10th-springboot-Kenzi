@@ -2,8 +2,8 @@
 name: Feature
 about: 백엔드 기능 개발을 위한 이슈 템플릿
 title: "[Feature] 기능 이름"
-labels: ''
-assignees: ''
+labels: ""
+assignees: ""
 
 ---
 
@@ -17,3 +17,4 @@ assignees: ''
 
 ## 💡 참고 자료 (선택)
 관련 문서, 링크 등이 있다면 첨부하세요.
+

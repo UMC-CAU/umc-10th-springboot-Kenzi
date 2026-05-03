@@ -22,27 +22,27 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "내 정보 조회", description = "유저 ID로 내 정보를 조회합니다.")
-    @RequestBody(content = @Content(schema = @Schema(implementation = UserReqDTO.GetInfo.class)))
+    @RequestBody(content = @Content(schema = @Schema(implementation = UserReqDTO.GetInfoRequest.class)))
     @PostMapping("/me")
-    public ApiResponse<UserResDTO.GetInfo> me(@org.springframework.web.bind.annotation.RequestBody UserReqDTO.GetInfo reqDTO) {
+    public ApiResponse<UserResDTO.GetInfoResponse> me(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_FOUND, userService.getMe(reqDTO.userId()));
     }
 
     @Operation(summary = "회원가입", description = "신규 유저를 회원가입 처리합니다.")
     @PostMapping("/signup")
-    public ApiResponse<UserResDTO.GetInfo> signup(@org.springframework.web.bind.annotation.RequestBody UserReqDTO.Signup reqDTO) {
+    public ApiResponse<UserResDTO.GetInfoResponse> signup(@RequestBody UserReqDTO.SignupRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_SINGUP, userService.signUp(reqDTO));
     }
 
     @Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인합니다.")
     @PostMapping("/login")
-    public ApiResponse<UserResDTO.GetInfo> login(@org.springframework.web.bind.annotation.RequestBody UserReqDTO.Login reqDTO) {
+    public ApiResponse<UserResDTO.GetInfoResponse> login(@RequestBody UserReqDTO.LoginRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_LOGIN, userService.login(reqDTO));
     }
 
     @Operation(summary = "회원 탈퇴", description = "유저를 탈퇴 처리합니다.")
     @PatchMapping("/witdraw")
-    public ApiResponse<UserResDTO.GetInfo> withdraw(@org.springframework.web.bind.annotation.RequestBody UserReqDTO.GetInfo reqDTO) {
+    public ApiResponse<UserResDTO.GetInfoResponse> withdraw(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_WITHDRAW, userService.withdraw(reqDTO.userId()));
     }
 }

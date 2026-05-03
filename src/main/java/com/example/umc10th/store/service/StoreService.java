@@ -20,10 +20,10 @@ public class StoreService {
         return storeRepository.findAll();
     }
 
-    public List<StoreResDTO.GetStoreList> getStoresByAddressCode(String addressCode) {
-        List<StoreResDTO.GetStoreList> stores = storeRepository.findByAddressCode(addressCode)
+    public List<StoreResDTO.GetStoreListResponse> getStoresByAddressCode(String addressCode) {
+        List<StoreResDTO.GetStoreListResponse> stores = storeRepository.findByAddressCode(addressCode)
                 .stream()
-                .map(StoreResDTO.GetStoreList::from)
+                .map(StoreResDTO.GetStoreListResponse::from)
                 .toList();
         if (stores.isEmpty()) {
             throw new ProjectException(StoreErrorCode.STORE_LIST_NOT_FOUND);
@@ -31,9 +31,9 @@ public class StoreService {
         return stores;
     }
 
-    public StoreResDTO.GetStoreDetail getStoreDetail(String storeId) {
+    public StoreResDTO.GetStoreDetailResponse getStoreDetail(Long storeId) {
         return storeRepository.findById(storeId)
-                .map(StoreResDTO.GetStoreDetail::from)
+                .map(StoreResDTO.GetStoreDetailResponse::from)
                 .orElseThrow(() -> new ProjectException(StoreErrorCode.STORE_NOT_FOUND));
     }
 }

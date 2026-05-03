@@ -19,23 +19,23 @@ public class MissionService {
         return missionRepository.findAll();
     }
 
-    public List<MissionResDTO.getMissionList> getMissionList(Long address) {
-        return List.of(new MissionResDTO.getMissionList(address, List.of()));
+    public List<MissionResDTO.GetMissionListResponse> getMissionList(Long address) {
+        return List.of(new MissionResDTO.GetMissionListResponse(address, List.of()));
     }
 
-    public List<MissionResDTO.getMissionDoing> getMissionDoing(Long userId, Long address) {
-        return List.of(new MissionResDTO.getMissionDoing(address, userId, List.of()));
+    public List<MissionResDTO.GetMissionDoingResponse> getMissionDoing(Long userId, Long address) {
+        return List.of(new MissionResDTO.GetMissionDoingResponse(address, userId, List.of()));
     }
 
-    public List<MissionResDTO.getMissionDone> getMissionDone(Long userId, Long address) {
-        return List.of(new MissionResDTO.getMissionDone(address, userId, List.of()));
+    public List<MissionResDTO.GetMissionDoneResponse> getMissionDone(Long userId, Long address) {
+        return List.of(new MissionResDTO.GetMissionDoneResponse(address, userId, List.of()));
     }
 
-    public MissionResDTO.setMissionDone completeMission(Long userId, Long missionId) {
-        return new MissionResDTO.setMissionDone(userId, missionId, true);
+    public MissionResDTO.SetMissionDoneResponse completeMission(Long userId, Long missionId) {
+        return new MissionResDTO.SetMissionDoneResponse(userId, missionId, true);
     }
 
-    public MissionResDTO.postMissionReview postMissionReview(Long userId, Long missionId, Review review) {
-        return new MissionResDTO.postMissionReview(userId, missionId, null);
+    public MissionResDTO.PostMissionReviewResponse postMissionReview(Long userId, Long missionId, Review review) {
+        return new MissionResDTO.PostMissionReviewResponse(userId, missionId, null);
     }
 }

@@ -19,8 +19,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserResDTO.GetInfo getMe(Long userId) {
-        return userRepository.findById(userId).map(user -> new UserResDTO.GetInfo(
+    public UserResDTO.GetInfoResponse getMe(Long userId) {
+        return userRepository.findById(userId).map(user -> new UserResDTO.GetInfoResponse(
                 user.getId(),
                 user.getAddressCode(),
                 user.getName(),
@@ -33,8 +33,8 @@ public class UserService {
         )).orElseThrow(() -> new ProjectException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    public UserResDTO.GetInfo signUp(UserReqDTO.Signup reqDTO) {
-        return new UserResDTO.GetInfo(
+    public UserResDTO.GetInfoResponse signUp(UserReqDTO.SignupRequest reqDTO) {
+        return new UserResDTO.GetInfoResponse(
                 0L,
                 reqDTO.addressCode(),
                 reqDTO.name(),
@@ -47,8 +47,8 @@ public class UserService {
         );
     }
 
-    public UserResDTO.GetInfo login(UserReqDTO.Login reqDTO) {
-        return new UserResDTO.GetInfo(
+    public UserResDTO.GetInfoResponse login(UserReqDTO.LoginRequest reqDTO) {
+        return new UserResDTO.GetInfoResponse(
                 0L,
                 null,
                 null,
@@ -61,8 +61,8 @@ public class UserService {
         );
     }
 
-    public UserResDTO.GetInfo withdraw(Long userId) {
-        return new UserResDTO.GetInfo(
+    public UserResDTO.GetInfoResponse withdraw(Long userId) {
+        return new UserResDTO.GetInfoResponse(
                 userId,
                 null,
                 null,

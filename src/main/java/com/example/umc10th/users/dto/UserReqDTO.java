@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 public class UserReqDTO {
 
     @Schema(name = "UserGetInfoRequest")
-    public record GetInfo(Long userId) {}
+    public record GetInfoRequest(Long userId) {}
 
     @Schema(name = "UserSignupRequest")
-    public record Signup(
+    public record SignupRequest(
             String email,
             String name,
             Integer age,
@@ -22,7 +22,7 @@ public class UserReqDTO {
     ) {}
 
     @Schema(name = "UserLoginRequest")
-    public record Login(
+    public record LoginRequest(
             String email,
             String password
     ) {}

@@ -24,13 +24,13 @@ public class StoreController {
 
     @Operation(summary = "가게 목록 조회", description = "주소 코드로 가게 목록을 조회합니다.")
     @GetMapping
-    public ApiResponse<List<StoreResDTO.GetStoreList>> getStoreList(@RequestParam String addressCode) {
+    public ApiResponse<List<StoreResDTO.GetStoreListResponse>> getStoreList(@RequestParam String addressCode) {
         return ApiResponse.success(StoreSuccessCode.STORE_LIST_FOUND, storeService.getStoresByAddressCode(addressCode));
     }
 
     @Operation(summary = "가게 상세 조회", description = "가게 ID로 상세 정보를 조회합니다.")
     @GetMapping("/detail")
-    public ApiResponse<StoreResDTO.GetStoreDetail> getStoreDetail(@RequestParam String storeId) {
+    public ApiResponse<StoreResDTO.GetStoreDetailResponse> getStoreDetail(@RequestParam Long storeId) {
         return ApiResponse.success(StoreSuccessCode.STORE_DETAIL_FOUND, storeService.getStoreDetail(storeId));
     }
 }

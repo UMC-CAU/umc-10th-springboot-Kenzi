@@ -4,14 +4,14 @@ import com.example.umc10th.store.entity.Store;
 
 public class StoreResDTO {
 
-    public record GetStoreList(
-            String id,
+    public record GetStoreListResponse(
+            Long id,
             String name,
             String addressCode,
             String storePhotoUrl
     ) {
-        public static GetStoreList from(Store store) {
-            return new GetStoreList(
+        public static GetStoreListResponse from(Store store) {
+            return new GetStoreListResponse(
                     store.getId(),
                     store.getName(),
                     store.getAddressCode(),
@@ -20,17 +20,17 @@ public class StoreResDTO {
         }
     }
 
-    public record GetStoreDetail(
-            String id,
+    public record GetStoreDetailResponse(
+            Long id,
             String name,
             String addressCode,
-            String ceoId,
+            Long ceoId,
             Long foodId,
             String storePhotoUrl,
             String introduction
     ) {
-        public static GetStoreDetail from(Store store) {
-            return new GetStoreDetail(
+        public static GetStoreDetailResponse from(Store store) {
+            return new GetStoreDetailResponse(
                     store.getId(),
                     store.getName(),
                     store.getAddressCode(),

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class UserResDTO {
 
     @Schema(name = "UserGetInfoResponse")
-    public record GetInfo(
+    public record GetInfoResponse(
             Long id,
             String addressCode,
             String name,

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MissionReqDTO {
 
-    public record getMissionList(Long address , Long userId) {}
+    public record GetMissionListRequest(Long address, Long userId) {}
 
-    public record setMissionComplete(Long userId, Long missionId) {}
+    public record CompleteMissionsRequest(Long userId, Long missionId) {}
 
-    public record postMissionReview(Long userId, Long missionId , Review review) {}
+    public record PostMissionReviewRequest(Long userId, Long missionId, Review review) {}
 }

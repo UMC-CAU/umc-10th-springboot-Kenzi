@@ -9,12 +9,12 @@ import lombok.Getter;
 public class Mission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
 
-    @Column(nullable = false, length = 36)
-    private String storeId;
+    @Column(nullable = false)
+    private Long storeId;
 
     @Column(nullable = false)
     private Integer point;

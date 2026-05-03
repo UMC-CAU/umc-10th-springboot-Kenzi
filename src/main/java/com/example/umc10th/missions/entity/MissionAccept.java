@@ -15,15 +15,15 @@ import java.time.LocalDateTime;
 public class MissionAccept {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
 
-    @Column(name = "user_id", nullable = false, length = 36)
-    private String userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @Column(name = "mission_id", nullable = false, length = 36)
-    private String missionId;
+    @Column(name = "mission_id", nullable = false)
+    private Long missionId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

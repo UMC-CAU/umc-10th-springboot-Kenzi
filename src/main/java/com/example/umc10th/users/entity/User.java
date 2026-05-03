@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
 
     @Column(nullable = false, length = 20)
     private String addressCode;
@@ -41,4 +41,7 @@ public class User {
     private LocalDateTime createdAt;
 
     private LocalDateTime deletedAt;
+
+    @Column(nullable = false)
+    private String password;
 }

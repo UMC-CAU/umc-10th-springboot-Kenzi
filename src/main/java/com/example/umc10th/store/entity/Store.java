@@ -9,15 +9,15 @@ import lombok.Getter;
 public class Store {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(length = 36)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
 
     @Column(nullable = false, length = 20)
     private String addressCode;
 
-    @Column(nullable = false, length = 36)
-    private String ceoId;
+    @Column(nullable = false)
+    private Long ceoId;
 
     @Column(nullable = false)
     private Long foodId;

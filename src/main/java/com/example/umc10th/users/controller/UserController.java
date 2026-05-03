@@ -1,28 +1,48 @@
 package com.example.umc10th.users.controller;
 
-import com.example.umc10th.users.entity.User;
+import com.example.umc10th.global.response.ApiResponse;
+import com.example.umc10th.users.dto.UserReqDTO;
+import com.example.umc10th.users.dto.UserResDTO;
+import com.example.umc10th.users.enums.UserSuccessCode;
 import com.example.umc10th.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Users", description = "유저 API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "전체 유저 조회", description = "등록된 모든 유저를 조회합니다.")
-    @GetMapping
-    public ResponseEntity<List<User>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    @Operation(summary = "내 정보 조회", description = "유저 ID로 내 정보를 조회합니다.")
+    @RequestBody(content = @Content(schema = @Schema(implementation = UserReqDTO.GetInfoRequest.class)))
+    @PostMapping("/me")
+    public ApiResponse<UserResDTO.GetInfoResponse> me(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_FOUND, userService.getMe(reqDTO.userId()));
+    }
+
+    @Operation(summary = "회원가입", description = "신규 유저를 회원가입 처리합니다.")
+    @PostMapping("/signup")
+    public ApiResponse<UserResDTO.GetInfoResponse> signup(@RequestBody UserReqDTO.SignupRequest reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_SINGUP, userService.signUp(reqDTO));
+    }
+
+    @Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인합니다.")
+    @PostMapping("/login")
+    public ApiResponse<UserResDTO.GetInfoResponse> login(@RequestBody UserReqDTO.LoginRequest reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_LOGIN, userService.login(reqDTO));
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "유저를 탈퇴 처리합니다.")
+    @PatchMapping("/witdraw")
+    public ApiResponse<UserResDTO.GetInfoResponse> withdraw(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_WITHDRAW, userService.withdraw(reqDTO.userId()));
     }
 }

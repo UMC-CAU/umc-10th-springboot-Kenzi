@@ -1,11 +1,16 @@
 package com.example.umc10th.missions.service;
 
+import com.example.umc10th.global.exception.ProjectException;
+import com.example.umc10th.missions.dto.MissionReqDTO;
 import com.example.umc10th.missions.dto.MissionResDTO;
 import com.example.umc10th.missions.entity.Mission;
 import com.example.umc10th.missions.entity.Review;
+import com.example.umc10th.missions.enums.MissionErrorCode;
 import com.example.umc10th.missions.repository.MissionRepository;
+import com.example.umc10th.missions.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +19,7 @@ import java.util.List;
 public class MissionService {
 
     private final MissionRepository missionRepository;
+    private final ReviewRepository reviewRepository;
 
     public List<Mission> getAll() {
         return missionRepository.findAll();
@@ -35,7 +41,25 @@ public class MissionService {
         return new MissionResDTO.SetMissionDoneResponse(userId, missionId, true);
     }
 
-    public MissionResDTO.PostMissionReviewResponse postMissionReview(Long userId, Long missionId, Review review) {
-        return new MissionResDTO.PostMissionReviewResponse(userId, missionId, null);
+    @Transactional
+    public MissionResDTO.PostMissionReviewResponse postMissionReview(Long userId, Long missionId, MissionReqDTO.ReviewRequest review) {
+        Mission mission = missionRepository.findById(missionId)
+                .orElseThrow(() -> new ProjectException(MissionErrorCode.MISSION_NOT_FOUND));
+
+        if (reviewRepository.existsActiveReview(missionId, userId)) {
+            throw new ProjectException(MissionErrorCode.REVIEW_ALREADY_EXISTS);
+        }
+
+        Review newReview = Review.create(
+                missionId,
+                mission.getStoreId(),
+                userId,
+                review.description(),
+                review.score(),
+                review.photoUrl()
+        );
+        Review savedReview = reviewRepository.save(newReview);
+
+        return new MissionResDTO.PostMissionReviewResponse(userId, missionId, savedReview.getId());
     }
 }

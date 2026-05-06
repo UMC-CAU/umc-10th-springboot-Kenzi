@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
-@Table(name = "\"Store\"")
+@Table(name = "store")
 @Getter
 public class Store {
 
@@ -35,7 +35,7 @@ public class Store {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "store_photo_url", nullable = false, length = 500)
     private String storePhotoUrl;
 
     @Column(nullable = false, columnDefinition = "TEXT")

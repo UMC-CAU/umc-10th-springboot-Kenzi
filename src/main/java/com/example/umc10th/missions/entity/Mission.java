@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
-@Table(name = "\"Mission\"")
+@Table(name = "mission")
 @Getter
 public class Mission {
 

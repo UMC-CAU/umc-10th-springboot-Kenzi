@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Review")
+@Table(name = "review")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
@@ -58,4 +58,17 @@ public class Review {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    private Review(Long missionId, Long storeId, Long userId, String description, BigDecimal score, String photoUrl) {
+        this.missionId = missionId;
+        this.storeId = storeId;
+        this.userId = userId;
+        this.description = description;
+        this.score = score;
+        this.photoUrl = photoUrl;
+    }
+
+    public static Review create(Long missionId, Long storeId, Long userId, String description, BigDecimal score, String photoUrl) {
+        return new Review(missionId, storeId, userId, description, score, photoUrl);
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.umc10th.missions.entity;
 
+import com.example.umc10th.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -13,8 +14,12 @@ public class Mission {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "store_id", nullable = false)
     private Long storeId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    private Store store;
 
     @Column(nullable = false)
     private Integer point;

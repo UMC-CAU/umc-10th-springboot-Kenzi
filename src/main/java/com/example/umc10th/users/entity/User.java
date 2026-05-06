@@ -1,5 +1,6 @@
 package com.example.umc10th.users.entity;
 
+import com.example.umc10th.reference.entity.Address;
 import com.example.umc10th.users.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,8 +18,12 @@ public class User {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "address_code", nullable = false, length = 20)
     private String addressCode;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_code", referencedColumnName = "code", insertable = false, updatable = false)
+    private Address address;
 
     @Column(nullable = false, length = 50)
     private String name;

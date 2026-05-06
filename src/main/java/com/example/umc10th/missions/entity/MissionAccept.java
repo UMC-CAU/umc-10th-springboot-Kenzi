@@ -1,5 +1,6 @@
 package com.example.umc10th.missions.entity;
 
+import com.example.umc10th.users.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,8 +23,16 @@ public class MissionAccept {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
     @Column(name = "mission_id", nullable = false)
     private Long missionId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mission_id", insertable = false, updatable = false)
+    private Mission mission;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

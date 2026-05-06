@@ -6,9 +6,6 @@ import com.example.umc10th.users.dto.UserResDTO;
 import com.example.umc10th.users.enums.UserSuccessCode;
 import com.example.umc10th.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +19,6 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "내 정보 조회", description = "유저 ID로 내 정보를 조회합니다.")
-    @RequestBody(content = @Content(schema = @Schema(implementation = UserReqDTO.GetInfoRequest.class)))
     @PostMapping("/me")
     public ApiResponse<UserResDTO.GetInfoResponse> me(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_FOUND, userService.getMe(reqDTO.userId()));

@@ -14,13 +14,13 @@ public interface MissionAcceptRepository extends JpaRepository<MissionAccept, Lo
                     SELECT ma.missionId
                     FROM MissionAccept ma
                     WHERE ma.userId = :userId
-                      AND ma.isCompleted IS FALSE 
+                      AND ma.isCompleted = false
                     """,
             countQuery = """
                     SELECT COUNT(ma)
                     FROM MissionAccept ma
                     WHERE ma.userId = :userId
-                      AND ma.isCompleted IS FALSE 
+                      AND ma.isCompleted = false
                     """
     )
     Page<Long> findDoingMissionIds(@Param("userId") Long userId, Pageable pageable);

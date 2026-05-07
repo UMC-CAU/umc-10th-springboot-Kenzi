@@ -8,36 +8,56 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MissionAcceptRepository extends JpaRepository<MissionAccept, Long> {
+    interface AcceptedMissionProjection {
+        Long getMissionId();
+        Integer getPoint();
+        String getDescription();
+        String getStoreName();
+    }
 
     @Query(
             value = """
-                    SELECT ma.missionId
-                    FROM MissionAccept ma
-                    WHERE ma.userId = :userId
-                      AND ma.isCompleted = false
+                    SELECT m.id AS missionId,
+                           m.point AS point,
+                           m.description AS description,
+                           s.name AS storeName
+                    FROM mission_accepted ma
+                    JOIN mission m ON m.id = ma.mission_id
+                    JOIN store s ON s.id = m.store_id
+                    WHERE ma.user_id = :userId
+                      AND ma.is_completed = false
                     """,
             countQuery = """
-                    SELECT COUNT(ma)
-                    FROM MissionAccept ma
-                    WHERE ma.userId = :userId
-                      AND ma.isCompleted = false
+                    SELECT COUNT(*)
+                    FROM mission_accepted ma
+                    WHERE ma.user_id = :userId
+                      AND ma.is_completed = false
                     """
+            ,
+            nativeQuery = true
     )
-    Page<Long> findDoingMissionIds(@Param("userId") Long userId, Pageable pageable);
+    Page<AcceptedMissionProjection> findDoingMissions(@Param("userId") Long userId, Pageable pageable);
 
     @Query(
             value = """
-                    SELECT ma.missionId
-                    FROM MissionAccept ma
-                    WHERE ma.userId = :userId
-                      AND ma.isCompleted = true
+                    SELECT m.id AS missionId,
+                           m.point AS point,
+                           m.description AS description,
+                           s.name AS storeName
+                    FROM mission_accepted ma
+                    JOIN mission m ON m.id = ma.mission_id
+                    JOIN store s ON s.id = m.store_id
+                    WHERE ma.user_id = :userId
+                      AND ma.is_completed = true
                     """,
             countQuery = """
-                    SELECT COUNT(ma)
-                    FROM MissionAccept ma
-                    WHERE ma.userId = :userId
-                      AND ma.isCompleted = true
+                    SELECT COUNT(*)
+                    FROM mission_accepted ma
+                    WHERE ma.user_id = :userId
+                      AND ma.is_completed = true
                     """
+            ,
+            nativeQuery = true
     )
-    Page<Long> findDoneMissionIds(@Param("userId") Long userId, Pageable pageable);
+    Page<AcceptedMissionProjection> findDoneMissions(@Param("userId") Long userId, Pageable pageable);
 }

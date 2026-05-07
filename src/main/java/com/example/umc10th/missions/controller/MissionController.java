@@ -23,10 +23,15 @@ public class MissionController {
     private final MissionService missionService;
 
 
-    @Operation(summary = "미션 목록 조회", description = "주소 기준 미션 목록을 조회합니다.")
+    @Operation(summary = "수락 가능한 미션 목록 조회", description = "addressCode에 해당하는 store들의 mission 중, 해당 user가 아직 수락하지 않은 미션만 조회합니다.")
     @GetMapping("/missions")
-    public ApiResponse<List<MissionResDTO.GetMissionListResponse>> getMissionList(@RequestBody MissionReqDTO.GetMissionListRequest missionReqDTO) {
-        List<MissionResDTO.GetMissionListResponse> missions = missionService.getMissionList(missionReqDTO.address());
+    public ApiResponse<List<MissionResDTO.GetMissionListResponse>> getMissionList(
+            @Parameter(description = "주소 코드", example = "A1", required = true)
+            @RequestParam String addressCode,
+            @Parameter(description = "유저 ID", example = "1", required = true)
+            @RequestParam Long userId
+    ) {
+        List<MissionResDTO.GetMissionListResponse> missions = missionService.getMissionList(addressCode, userId);
         return ApiResponse.success(MissionSuccessCode.MISSION_LIST_FOUND, missions);
     }
 

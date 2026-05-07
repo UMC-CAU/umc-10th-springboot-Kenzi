@@ -31,8 +31,25 @@ public class MissionService {
         return missionRepository.findAll();
     }
 
-    public List<MissionResDTO.GetMissionListResponse> getMissionList(Long address) {
-        return List.of(new MissionResDTO.GetMissionListResponse(address, List.of()));
+    public List<MissionResDTO.GetMissionListResponse> getMissionList(String addressCode, Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ProjectException(MissionErrorCode.MISSION_USER_NOT_FOUND);
+        }
+
+        List<MissionResDTO.AvailableMission> availableMissions = missionRepository.findAvailableMissions(addressCode, userId)
+                .stream()
+                .map(mission -> new MissionResDTO.AvailableMission(
+                        mission.getMissionId(),
+                        mission.getPoint(),
+                        mission.getDescription(),
+                        mission.getStoreName()
+                ))
+                .toList();
+        if (availableMissions.isEmpty()) {
+            throw new ProjectException(MissionErrorCode.AVAILABLE_MISSION_NOT_FOUND);
+        }
+
+        return List.of(new MissionResDTO.GetMissionListResponse(addressCode, userId, availableMissions));
     }
 
     public List<MissionResDTO.GetMissionDoingResponse> getMissionDoing(Long userId, Long address, Integer page, Integer size) {
@@ -47,11 +64,20 @@ public class MissionService {
         }
 
         Pageable pageable = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
-        List<Long> doingMissionIds = missionAcceptRepository.findDoingMissionIds(userId, pageable).getContent();
-        if (doingMissionIds.isEmpty()) {
+        List<MissionResDTO.AvailableMission> doingMissions = missionAcceptRepository.findDoingMissions(userId, pageable)
+                .getContent()
+                .stream()
+                .map(mission -> new MissionResDTO.AvailableMission(
+                        mission.getMissionId(),
+                        mission.getPoint(),
+                        mission.getDescription(),
+                        mission.getStoreName()
+                ))
+                .toList();
+        if (doingMissions.isEmpty()) {
             throw new ProjectException(MissionErrorCode.MISSION_DOING_NOT_FOUND);
         }
-        return List.of(new MissionResDTO.GetMissionDoingResponse(address, userId, doingMissionIds));
+        return List.of(new MissionResDTO.GetMissionDoingResponse(address, userId, doingMissions));
     }
 
     public List<MissionResDTO.GetMissionDoneResponse> getMissionDone(Long userId, Long address, Integer page, Integer size) {
@@ -66,11 +92,20 @@ public class MissionService {
         }
 
         Pageable pageable = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
-        List<Long> doneMissionIds = missionAcceptRepository.findDoneMissionIds(userId, pageable).getContent();
-        if (doneMissionIds.isEmpty()) {
+        List<MissionResDTO.AvailableMission> doneMissions = missionAcceptRepository.findDoneMissions(userId, pageable)
+                .getContent()
+                .stream()
+                .map(mission -> new MissionResDTO.AvailableMission(
+                        mission.getMissionId(),
+                        mission.getPoint(),
+                        mission.getDescription(),
+                        mission.getStoreName()
+                ))
+                .toList();
+        if (doneMissions.isEmpty()) {
             throw new ProjectException(MissionErrorCode.MISSION_DONE_NOT_FOUND);
         }
-        return List.of(new MissionResDTO.GetMissionDoneResponse(address, userId, doneMissionIds));
+        return List.of(new MissionResDTO.GetMissionDoneResponse(address, userId, doneMissions));
     }
 
     public MissionResDTO.SetMissionDoneResponse completeMission(Long userId, Long missionId) {

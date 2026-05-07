@@ -41,4 +41,10 @@ public class UserController {
     public ApiResponse<UserResDTO.GetInfoResponse> withdraw(@RequestBody UserReqDTO.GetInfoRequest reqDTO) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_WITHDRAW, userService.withdraw(reqDTO.userId()));
     }
+
+    @Operation(summary="해당 주소의 나의 점수 조회", description = "유저의 해당 주소에서의 점수를 조회합니다.")
+    @GetMapping("/addressscore")
+    public ApiResponse<UserResDTO.AddressScoreResponse> getAddressScore(@RequestParam("userId") Long userId , @RequestParam("addresscode") String addresscode) {
+        return ApiResponse.success(UserSuccessCode.USER_SUCCESS_ADRESSSCORE_CODE, userService.getAddressScore(userId, addresscode));
+    }
 }

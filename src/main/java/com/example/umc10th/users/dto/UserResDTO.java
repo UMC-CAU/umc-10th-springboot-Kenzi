@@ -24,4 +24,10 @@ public class UserResDTO {
             LocalDateTime createdAt,
             LocalDateTime deletedAt
     ) {}
+    @Schema(name = "UserAddressScore")
+    public record AddressScoreResponse(
+            Long userId,
+            String addressCode,
+            Integer score
+    ) {}
 }

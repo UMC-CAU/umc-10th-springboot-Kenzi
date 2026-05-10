@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +100,47 @@ public class MissionService {
 
     public MissionResDTO.SetMissionDoneResponse completeMission(Long userId, Long missionId) {
         return MissionConverter.toMissionDoneResponse(userId, missionId);
+    }
+
+    public List<MissionResDTO.GetUserReviewResponse> getUserReviews(Long userId, String cursor, Integer size, String sort) {
+        if (size != null && size < 1) {
+            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        }
+        if (!userRepository.existsById(userId)) {
+            throw new ProjectException(MissionErrorCode.MISSION_USER_NOT_FOUND);
+        }
+
+        String reviewSort = MissionConverter.resolveReviewSort(sort);
+        MissionConverter.ReviewCursor reviewCursor = MissionConverter.resolveReviewCursor(cursor, reviewSort);
+        if (reviewCursor.reviewId() != null && reviewCursor.reviewId() < 1) {
+            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        }
+        if (reviewCursor.reviewId() != null) {
+            Review cursorReview = reviewRepository.findByIdAndUserIdAndDeletedAtIsNull(reviewCursor.reviewId(), userId)
+                    .orElseThrow(() -> new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST));
+            if ("score".equals(reviewSort) && cursorReview.getScore().compareTo(reviewCursor.score()) != 0) {
+                throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+            }
+        }
+
+        Pageable pageable = PageRequest.of(0, size == null ? 10 : size);
+        Slice<Review> reviewSlice = switch (reviewSort) {
+            case "id" -> reviewRepository.findUserReviewsOrderById(userId, reviewCursor.reviewId(), pageable);
+            case "score" -> reviewRepository.findUserReviewsOrderByScore(userId, reviewCursor.score(), reviewCursor.reviewId(), pageable);
+            default -> throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        };
+        List<MissionResDTO.ReviewResponse> reviews = reviewSlice.getContent()
+                .stream()
+                .map(MissionConverter::toReviewResponse)
+                .toList();
+        if (reviews.isEmpty()) {
+            throw new ProjectException(MissionErrorCode.REVIEW_NOT_FOUND);
+        }
+
+        String nextCursor = MissionConverter.resolveNextReviewCursor(reviewSort, reviews, reviewSlice.hasNext());
+        MissionResDTO.SlicePagination<MissionResDTO.ReviewResponse> pagination = MissionConverter.toSlicePagination(reviews, reviewSlice, nextCursor);
+
+        return List.of(MissionConverter.toUserReviewResponse(userId, pagination));
     }
 
     @Transactional

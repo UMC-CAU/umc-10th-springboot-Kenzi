@@ -35,7 +35,7 @@ public class MissionController {
         return ApiResponse.success(MissionSuccessCode.MISSION_LIST_FOUND, missions);
     }
 
-    @Operation(summary = "진행 중 미션 조회", description = "유저의 진행 중인 미션을 조회합니다. query parameter(page, size)로 페이지네이션합니다.")
+    @Operation(summary = "진행 중 미션 조회", description = "유저의 진행 중인 미션을 조회합니다. query parameter(page, size, sort)로 페이지네이션 및 정렬합니다.")
     @GetMapping("/missions/doing")
     public ApiResponse<List<MissionResDTO.GetMissionDoingResponse>> getMissionDoing(
             @Parameter(description = "주소 ID", example = "1", required = true)
@@ -45,18 +45,21 @@ public class MissionController {
             @Parameter(description = "페이지 번호(0부터 시작)", example = "0")
             @RequestParam(required = false) Integer page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam(required = false) Integer size
+            @RequestParam(required = false) Integer size,
+            @Parameter(description = "내림차순 정렬 기준(id, missionId, point, description, storeName, createdAt, completedAt)", example = "id")
+            @RequestParam(required = false) String sort
     ) {
         List<MissionResDTO.GetMissionDoingResponse> missions = missionService.getMissionDoing(
                 userId,
                 address,
                 page,
-                size
+                size,
+                sort
         );
         return ApiResponse.success(MissionSuccessCode.MISSION_DOING_FOUND, missions);
     }
 
-    @Operation(summary = "완료 미션 조회", description = "유저의 완료한 미션을 조회합니다. query parameter(page, size)로 페이지네이션합니다.")
+    @Operation(summary = "완료 미션 조회", description = "유저의 완료한 미션을 조회합니다. query parameter(page, size, sort)로 페이지네이션 및 정렬합니다.")
     @GetMapping("/missions/done")
     public ApiResponse<List<MissionResDTO.GetMissionDoneResponse>> getMissionDone(
             @Parameter(description = "주소 ID", example = "1", required = true)
@@ -66,13 +69,16 @@ public class MissionController {
             @Parameter(description = "페이지 번호(0부터 시작)", example = "0")
             @RequestParam(required = false) Integer page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam(required = false) Integer size
+            @RequestParam(required = false) Integer size,
+            @Parameter(description = "내림차순 정렬 기준(id, missionId, point, description, storeName, createdAt, completedAt)", example = "id")
+            @RequestParam(required = false) String sort
     ) {
         List<MissionResDTO.GetMissionDoneResponse> missions = missionService.getMissionDone(
                 userId,
                 address,
                 page,
-                size
+                size,
+                sort
         );
         return ApiResponse.success(MissionSuccessCode.MISSION_DONE_FOUND, missions);
     }

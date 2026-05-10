@@ -4,11 +4,18 @@ import java.util.List;
 
 public class MissionResDTO {
 
-    public record GetMissionListResponse(Long address, List<Long> missionIds) {}
+    public record AvailableMission(
+            Long missionId,
+            Integer point,
+            String description,
+            String storeName
+    ) {}
 
-    public record GetMissionDoneResponse(Long address, Long userId, List<Long> completedMissionIds) {}
+    public record GetMissionListResponse(String addressCode, Long userId, List<AvailableMission> missions) {}
 
-    public record GetMissionDoingResponse(Long address, Long userId, List<Long> doingMissionIds) {}
+    public record GetMissionDoneResponse(Long address, Long userId, List<AvailableMission> completedMissions) {}
+
+    public record GetMissionDoingResponse(Long address, Long userId, List<AvailableMission> doingMissions) {}
 
     public record SetMissionDoneResponse(Long userId, Long missionId, boolean completed) {}
 

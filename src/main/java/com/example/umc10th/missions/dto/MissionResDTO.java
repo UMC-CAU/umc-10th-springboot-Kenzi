@@ -1,6 +1,8 @@
 package com.example.umc10th.missions.dto;
 
 import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class MissionResDTO {
 
@@ -11,6 +13,13 @@ public class MissionResDTO {
             Long totalElements,
             Integer totalPages,
             Boolean last
+    ) {}
+
+    public record SlicePagination<T>(
+            List<T> data,
+            Integer pageSize,
+            String nextCursor,
+            Boolean hasNext
     ) {}
 
     public record AvailableMission(
@@ -29,4 +38,17 @@ public class MissionResDTO {
     public record SetMissionDoneResponse(Long userId, Long missionId, boolean completed) {}
 
     public record PostMissionReviewResponse(Long userId, Long missionId, Long reviewId) {}
+
+    public record ReviewResponse(
+            Long reviewId,
+            Long missionId,
+            Long storeId,
+            Long userId,
+            String description,
+            BigDecimal score,
+            String photoUrl,
+            LocalDateTime createdAt
+    ) {}
+
+    public record GetUserReviewResponse(Long userId, SlicePagination<ReviewResponse> reviews) {}
 }

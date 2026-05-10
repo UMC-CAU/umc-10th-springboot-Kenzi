@@ -9,13 +9,18 @@ import com.example.umc10th.missions.enums.MissionErrorCode;
 import com.example.umc10th.missions.repository.MissionAcceptRepository;
 import com.example.umc10th.missions.repository.MissionRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class MissionConverter {
 
     private MissionConverter() {
+    }
+
+    public record ReviewCursor(Long reviewId, BigDecimal score) {
     }
 
     public static <T> MissionResDTO.Pagination<T> toPagination(
@@ -29,6 +34,19 @@ public class MissionConverter {
                 page.getTotalElements(),
                 page.getTotalPages(),
                 page.isLast()
+        );
+    }
+
+    public static <T> MissionResDTO.SlicePagination<T> toSlicePagination(
+            List<T> data,
+            Slice<?> slice,
+            String nextCursor
+    ) {
+        return new MissionResDTO.SlicePagination<>(
+                data,
+                slice.getSize(),
+                nextCursor,
+                slice.hasNext()
         );
     }
 
@@ -78,6 +96,26 @@ public class MissionConverter {
         return new MissionResDTO.SetMissionDoneResponse(userId, missionId, true);
     }
 
+    public static MissionResDTO.ReviewResponse toReviewResponse(Review review) {
+        return new MissionResDTO.ReviewResponse(
+                review.getId(),
+                review.getMissionId(),
+                review.getStoreId(),
+                review.getUserId(),
+                review.getDescription(),
+                review.getScore(),
+                review.getPhotoUrl(),
+                review.getCreatedAt()
+        );
+    }
+
+    public static MissionResDTO.GetUserReviewResponse toUserReviewResponse(
+            Long userId,
+            MissionResDTO.SlicePagination<MissionResDTO.ReviewResponse> reviews
+    ) {
+        return new MissionResDTO.GetUserReviewResponse(userId, reviews);
+    }
+
     public static Review toReview(Long userId, Mission mission, MissionReqDTO.ReviewRequest review) {
         return Review.create(
                 mission.getId(),
@@ -114,5 +152,59 @@ public class MissionConverter {
         };
 
         return Sort.by(Sort.Direction.DESC, property);
+    }
+
+    public static String resolveReviewSort(String sort) {
+        if (sort == null || sort.isBlank()) {
+            return "id";
+        }
+
+        return switch (sort) {
+            case "id" -> "id";
+            case "score", "rating" -> "score";
+            default -> throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        };
+    }
+
+    public static ReviewCursor resolveReviewCursor(String cursor, String sort) {
+        if (cursor == null || cursor.isBlank()) {
+            return new ReviewCursor(null, null);
+        }
+
+        if ("id".equals(sort)) {
+            return new ReviewCursor(parseCursorId(cursor), null);
+        }
+
+        String[] values = cursor.split(":");
+        if (values.length != 2) {
+            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        }
+
+        try {
+            return new ReviewCursor(Long.parseLong(values[1]), new BigDecimal(values[0]));
+        } catch (NumberFormatException e) {
+            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        }
+    }
+
+    public static String resolveNextReviewCursor(String sort, List<MissionResDTO.ReviewResponse> reviews, boolean hasNext) {
+        if (!hasNext) {
+            return null;
+        }
+
+        MissionResDTO.ReviewResponse lastReview = reviews.getLast();
+        if ("score".equals(sort)) {
+            return lastReview.score().toPlainString() + ":" + lastReview.reviewId();
+        }
+
+        return String.valueOf(lastReview.reviewId());
+    }
+
+    private static Long parseCursorId(String cursor) {
+        try {
+            return Long.parseLong(cursor);
+        } catch (NumberFormatException e) {
+            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
+        }
     }
 }

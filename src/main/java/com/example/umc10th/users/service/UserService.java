@@ -6,6 +6,7 @@ import com.example.umc10th.users.dto.UserResDTO;
 import com.example.umc10th.users.entity.User;
 import com.example.umc10th.users.enums.UserErrorCode;
 import com.example.umc10th.users.enums.UserRole;
+import com.example.umc10th.users.repository.AddressScoreRepository;
 import com.example.umc10th.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AddressScoreRepository addressScoreRepository;
 
     public UserResDTO.GetInfoResponse getMe(Long userId) {
         return userRepository.findById(userId).map(user -> new UserResDTO.GetInfoResponse(
@@ -72,6 +74,21 @@ public class UserService {
                 0,
                 LocalDateTime.now(),
                 LocalDateTime.now()
+        );
+    }
+    public UserResDTO.AddressScoreResponse getAddressScore(Long userId , String addressCode) {
+        if (!userRepository.existsById(userId)) {
+            throw new ProjectException(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        Integer score = addressScoreRepository.findByIdUserIdAndIdAddressCode(userId, addressCode)
+                .map(addressScore -> addressScore.getScore())
+                .orElse(0);
+
+        return new UserResDTO.AddressScoreResponse(
+                userId,
+                addressCode,
+                score
         );
     }
 }

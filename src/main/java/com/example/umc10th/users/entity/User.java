@@ -1,14 +1,16 @@
 package com.example.umc10th.users.entity;
 
+import com.example.umc10th.reference.entity.Address;
 import com.example.umc10th.users.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "\"User\"")
+@Table(name = "user")
 @Getter
 public class User {
 
@@ -17,8 +19,12 @@ public class User {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "address_code", nullable = false, length = 20)
     private String addressCode;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_code", referencedColumnName = "code", insertable = false, updatable = false)
+    private Address address;
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -37,11 +43,15 @@ public class User {
     private Integer point = 0;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<AddressScore> addressScores;
 }

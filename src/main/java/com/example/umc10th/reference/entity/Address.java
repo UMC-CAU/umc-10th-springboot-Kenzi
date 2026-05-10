@@ -4,30 +4,26 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
-@Table(name = "\"Address\"")
+@Table(name = "address")
 @Getter
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Long id;
-
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(nullable = false, length = 20)
     private String code;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "parent_code", nullable = false, length = 20)
     private String parentCode;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "sido_code", nullable = false, length = 20)
     private String sidoCode;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "sigungu_code", nullable = false, length = 20)
     private String sigunguCode;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "emd_code", nullable = false, length = 20)
     private String emdCode;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "address_name", nullable = false, length = 100)
     private String addressName;
 }

@@ -13,6 +13,7 @@ public enum UserSuccessCode implements BaseSuccessCode {
     USER_SUCCESS_FOUND(HttpStatus.OK, "사용자 정보를 성공적으로 조회하였습니다." , "U200"),
     USER_SUCCESS_SINGUP(HttpStatus.OK , "사용자 회원가입이 성공적으로 마무리되었습니다." ,"U300"),
     USER_SUCCESS_LOGIN(HttpStatus.OK, "로그인이 성공적으로 처리되었습니다.", "U301"),
+    USER_SUCCESS_ADRESSSCORE_CODE(HttpStatus.OK , "해당 주소의 점수를 성공적으로 조회하였습니다" , "U303"),
     USER_SUCCESS_WITHDRAW(HttpStatus.OK, "회원 탈퇴가 성공적으로 처리되었습니다.", "U302");
 
     private final HttpStatus httpStatus;

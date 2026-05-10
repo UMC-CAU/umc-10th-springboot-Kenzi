@@ -4,11 +4,14 @@ import com.example.umc10th.global.code.BaseErrorCode;
 import com.example.umc10th.global.code.GeneralErrorCode;
 import com.example.umc10th.global.exception.ProjectException;
 import com.example.umc10th.global.response.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,6 +24,33 @@ public class GeneralExceptionAdvice {
             ProjectException e
     ) {
         BaseErrorCode errorCode = e.getCode();
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.fail(errorCode));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e
+    ) {
+        GeneralErrorCode errorCode = GeneralErrorCode.BAD_REQUEST;
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.fail(errorCode));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHandlerMethodValidationException(
+            HandlerMethodValidationException e
+    ) {
+        GeneralErrorCode errorCode = GeneralErrorCode.BAD_REQUEST;
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.fail(errorCode));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(
+            ConstraintViolationException e
+    ) {
+        GeneralErrorCode errorCode = GeneralErrorCode.BAD_REQUEST;
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(ApiResponse.fail(errorCode));
     }

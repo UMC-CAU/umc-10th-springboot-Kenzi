@@ -96,4 +96,25 @@ public class MissionController {
         MissionResDTO.PostMissionReviewResponse mission = missionService.postMissionReview(missionReview.userId() , missionReview.missionId() , missionReview.review());
         return ApiResponse.success(MissionSuccessCode.MISSION_REVIEW_CREATED, mission);
     }
+
+    @Operation(summary = "유저 리뷰 조회", description = "userId에 해당하는 리뷰를 cursor 기반 Slice로 조회합니다. sort=id 또는 sort=score를 지원합니다.")
+    @GetMapping("/missions/reviews")
+    public ApiResponse<List<MissionResDTO.GetUserReviewResponse>> getUserReviews(
+            @Parameter(description = "유저 ID", example = "1", required = true)
+            @RequestParam Long userId,
+            @Parameter(description = "커서(sort=id: 리뷰 ID, sort=score: 점수:리뷰ID)", example = "4.5:10")
+            @RequestParam(required = false) String cursor,
+            @Parameter(description = "조회 크기", example = "10")
+            @RequestParam(required = false) Integer size,
+            @Parameter(description = "정렬 기준(id, score)", example = "id")
+            @RequestParam(required = false) String sort
+    ) {
+        List<MissionResDTO.GetUserReviewResponse> reviews = missionService.getUserReviews(
+                userId,
+                cursor,
+                size,
+                sort
+        );
+        return ApiResponse.success(MissionSuccessCode.MISSION_REVIEW_FOUND, reviews);
+    }
 }

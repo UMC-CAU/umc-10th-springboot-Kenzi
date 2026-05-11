@@ -7,6 +7,8 @@ import com.example.umc10th.missions.entity.Mission;
 import com.example.umc10th.missions.enums.MissionSuccessCode;
 import com.example.umc10th.missions.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -76,9 +78,55 @@ public class MissionController {
         return ApiResponse.success(MissionSuccessCode.MISSION_REVIEW_CREATED, mission);
     }
 
-    @Operation(summary = "유저 리뷰 조회", description = "userId에 해당하는 리뷰를 request body와 cursor 기반 Slice로 조회합니다. sort=id 또는 sort=score를 지원합니다.")
+    @Operation(
+            summary = "유저 리뷰 조회",
+            description = """
+                    userId에 해당하는 리뷰를 cursor 기반 Slice로 조회합니다.
+                    sort=id는 리뷰 ID 커서(cursor 예: 13)를 사용하고, sort=score는 점수 커서(cursor 예: 5.0)를 사용합니다.
+                    cursor를 비우면 첫 페이지를 조회합니다.
+                    """
+    )
     @PostMapping("/missions/reviews")
     public ApiResponse<List<MissionResDTO.GetUserReviewResponse>> getUserReviews(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            name = "ID 커서 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": "13",
+                                                      "size": 10,
+                                                      "sort": "id"
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "Score 커서 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": "5.0",
+                                                      "size": 10,
+                                                      "sort": "score"
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "첫 페이지 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": null,
+                                                      "size": 10,
+                                                      "sort": "score"
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
             @RequestBody @Valid MissionReqDTO.GetUserReviewRequest request
     ) {
         List<MissionResDTO.GetUserReviewResponse> reviews = missionService.getUserReviews(

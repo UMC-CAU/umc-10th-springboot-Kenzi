@@ -75,12 +75,12 @@ public class MissionReqDTO {
             @NotNull
             @Positive
             Long userId,
-            @Schema(description = "커서(sort=id: 리뷰 ID, sort=score: 점수:리뷰ID)", example = "4.5:10")
+            @Schema(description = "커서(sort=id: 리뷰 ID, sort=score: 점수)", example = "5.0")
             String cursor,
             @Schema(description = "조회 크기(미입력 시 10)", example = "10")
             @Positive
             Integer size,
-            @Schema(description = "정렬 기준(id, score)", example = "id")
+            @Schema(description = "정렬 기준(id, score)", example = "score", allowableValues = {"id", "score"})
             String sort
     ) {
     }

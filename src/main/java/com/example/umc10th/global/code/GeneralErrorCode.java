@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum GeneralErrorCode implements BaseErrorCode{
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "E000", "잘못된 요청입니다."),
+    INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "E002", "올바른 입력 형태로 다시 요청해주세요."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "서버 내부 오류가 발생했습니다.")
     ;
     private final HttpStatus httpStatus;

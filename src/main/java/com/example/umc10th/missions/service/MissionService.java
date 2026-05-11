@@ -126,7 +126,7 @@ public class MissionService {
         Pageable pageable = PageRequest.of(0, size == null ? 10 : size);
         Slice<Review> reviewSlice = switch (reviewSort) {
             case "id" -> reviewRepository.findUserReviewsOrderById(userId, reviewCursor.reviewId(), pageable);
-            case "score" -> reviewRepository.findUserReviewsOrderByScore(userId, reviewCursor.score(), reviewCursor.reviewId(), pageable);
+            case "score" -> reviewRepository.findUserReviewsOrderByScore(userId, reviewCursor.score(), pageable);
             default -> throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
         };
         List<MissionResDTO.ReviewResponse> reviews = reviewSlice.getContent()

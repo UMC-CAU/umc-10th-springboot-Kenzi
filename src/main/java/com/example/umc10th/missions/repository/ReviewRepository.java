@@ -52,18 +52,13 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
               AND r.deletedAt IS NULL
               AND (
                     :cursorScore IS NULL
-                    OR r.score < :cursorScore
-                    OR (
-                        r.score = :cursorScore
-                        AND r.id < :cursorId
-                    )
+                    OR r.score <= :cursorScore
               )
             ORDER BY r.score DESC, r.id DESC
             """)
     Slice<Review> findUserReviewsOrderByScore(
             @Param("userId") Long userId,
             @Param("cursorScore") BigDecimal cursorScore,
-            @Param("cursorId") Long cursorId,
             Pageable pageable
     );
 }

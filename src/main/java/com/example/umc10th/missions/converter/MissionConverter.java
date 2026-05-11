@@ -175,13 +175,8 @@ public class MissionConverter {
             return new ReviewCursor(parseCursorId(cursor), null);
         }
 
-        String[] values = cursor.split(":");
-        if (values.length != 2) {
-            throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
-        }
-
         try {
-            return new ReviewCursor(Long.parseLong(values[1]), new BigDecimal(values[0]));
+            return new ReviewCursor(null, new BigDecimal(cursor));
         } catch (NumberFormatException e) {
             throw new ProjectException(MissionErrorCode.INVALID_PAGINATION_REQUEST);
         }
@@ -194,7 +189,7 @@ public class MissionConverter {
 
         MissionResDTO.ReviewResponse lastReview = reviews.getLast();
         if ("score".equals(sort)) {
-            return lastReview.score().toPlainString() + ":" + lastReview.reviewId();
+            return lastReview.score().toPlainString();
         }
 
         return String.valueOf(lastReview.reviewId());

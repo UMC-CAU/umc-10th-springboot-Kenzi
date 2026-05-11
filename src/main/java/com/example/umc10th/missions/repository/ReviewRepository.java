@@ -36,7 +36,7 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
             FROM Review r
             WHERE r.userId = :userId
               AND r.deletedAt IS NULL
-              AND (:cursor IS NULL OR r.id < :cursor)
+              AND (:cursor IS NULL OR r.id <= :cursor)
             ORDER BY r.id DESC
             """)
     Slice<Review> findUserReviewsOrderById(

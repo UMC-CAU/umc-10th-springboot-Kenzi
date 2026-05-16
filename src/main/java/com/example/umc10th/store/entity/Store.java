@@ -18,14 +18,14 @@ public class Store {
     @Column(name = "address_code", nullable = false, length = 20)
     private String addressCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_code", referencedColumnName = "code", insertable = false, updatable = false)
     private Address address;
 
     @Column(name = "ceo_id", nullable = false)
     private Long ceoId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ceo_id", insertable = false, updatable = false)
     private User ceo;
 

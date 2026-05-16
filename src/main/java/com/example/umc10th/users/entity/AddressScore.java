@@ -23,12 +23,12 @@ public class AddressScore {
     private AddressScoreId id;
 
     @MapsId("addressCode")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "code", referencedColumnName = "code", nullable = false)
     private Address address;
 
     @MapsId("userId")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 

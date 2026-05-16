@@ -18,6 +18,9 @@ public interface MissionAcceptRepository extends JpaRepository<MissionAccept, Lo
     @Query(
             value = """
                     SELECT m.id AS missionId,
+                           ma.id AS id,
+                           ma.created_at AS createdAt,
+                           ma.completed_at AS completedAt,
                            m.point AS point,
                            m.description AS description,
                            s.name AS storeName
@@ -41,6 +44,9 @@ public interface MissionAcceptRepository extends JpaRepository<MissionAccept, Lo
     @Query(
             value = """
                     SELECT m.id AS missionId,
+                           ma.id AS id,
+                           ma.created_at AS createdAt,
+                           ma.completed_at AS completedAt,
                            m.point AS point,
                            m.description AS description,
                            s.name AS storeName

@@ -17,7 +17,7 @@ public class Mission {
     @Column(name = "store_id", nullable = false)
     private Long storeId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", insertable = false, updatable = false)
     private Store store;
 

@@ -7,8 +7,10 @@ import com.example.umc10th.missions.entity.Mission;
 import com.example.umc10th.missions.enums.MissionSuccessCode;
 import com.example.umc10th.missions.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,70 +26,115 @@ public class MissionController {
 
 
     @Operation(summary = "수락 가능한 미션 목록 조회", description = "addressCode에 해당하는 store들의 mission 중, 해당 user가 아직 수락하지 않은 미션만 조회합니다.")
-    @GetMapping("/missions")
+    @PostMapping("/missions")
     public ApiResponse<List<MissionResDTO.GetMissionListResponse>> getMissionList(
-            @Parameter(description = "주소 코드", example = "A1", required = true)
-            @RequestParam String addressCode,
-            @Parameter(description = "유저 ID", example = "1", required = true)
-            @RequestParam Long userId
+            @RequestBody @Valid MissionReqDTO.GetMissionListRequest request
     ) {
-        List<MissionResDTO.GetMissionListResponse> missions = missionService.getMissionList(addressCode, userId);
+        List<MissionResDTO.GetMissionListResponse> missions = missionService.getMissionList(request.addressCode(), request.userId());
         return ApiResponse.success(MissionSuccessCode.MISSION_LIST_FOUND, missions);
     }
 
-    @Operation(summary = "진행 중 미션 조회", description = "유저의 진행 중인 미션을 조회합니다. query parameter(page, size)로 페이지네이션합니다.")
-    @GetMapping("/missions/doing")
+    @Operation(summary = "진행 중 미션 조회", description = "유저의 진행 중인 미션을 조회합니다. request body(page, size, sort)로 페이지네이션 및 정렬합니다.")
+    @PostMapping("/missions/doing")
     public ApiResponse<List<MissionResDTO.GetMissionDoingResponse>> getMissionDoing(
-            @Parameter(description = "주소 ID", example = "1", required = true)
-            @RequestParam Long address,
-            @Parameter(description = "유저 ID", example = "1", required = true)
-            @RequestParam Long userId,
-            @Parameter(description = "페이지 번호(0부터 시작)", example = "0")
-            @RequestParam(required = false) Integer page,
-            @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam(required = false) Integer size
+            @RequestBody @Valid MissionReqDTO.GetMissionDoingRequest request
     ) {
         List<MissionResDTO.GetMissionDoingResponse> missions = missionService.getMissionDoing(
-                userId,
-                address,
-                page,
-                size
+                request.userId(),
+                request.address(),
+                request.page(),
+                request.size(),
+                request.sort()
         );
         return ApiResponse.success(MissionSuccessCode.MISSION_DOING_FOUND, missions);
     }
 
-    @Operation(summary = "완료 미션 조회", description = "유저의 완료한 미션을 조회합니다. query parameter(page, size)로 페이지네이션합니다.")
-    @GetMapping("/missions/done")
+    @Operation(summary = "완료 미션 조회", description = "유저의 완료한 미션을 조회합니다. request body(page, size, sort)로 페이지네이션 및 정렬합니다.")
+    @PostMapping("/missions/done")
     public ApiResponse<List<MissionResDTO.GetMissionDoneResponse>> getMissionDone(
-            @Parameter(description = "주소 ID", example = "1", required = true)
-            @RequestParam Long address,
-            @Parameter(description = "유저 ID", example = "1", required = true)
-            @RequestParam Long userId,
-            @Parameter(description = "페이지 번호(0부터 시작)", example = "0")
-            @RequestParam(required = false) Integer page,
-            @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam(required = false) Integer size
+            @RequestBody @Valid MissionReqDTO.GetMissionDoneRequest request
     ) {
         List<MissionResDTO.GetMissionDoneResponse> missions = missionService.getMissionDone(
-                userId,
-                address,
-                page,
-                size
+                request.userId(),
+                request.address(),
+                request.page(),
+                request.size(),
+                request.sort()
         );
         return ApiResponse.success(MissionSuccessCode.MISSION_DONE_FOUND, missions);
     }
 
     @Operation(summary = "미션 완료 처리", description = "미션 완료 상태로 변경합니다.")
     @PatchMapping("/missions/complete")
-    public ApiResponse<MissionResDTO.SetMissionDoneResponse> completeMission(@RequestBody MissionReqDTO.CompleteMissionsRequest completeMission) {
+    public ApiResponse<MissionResDTO.SetMissionDoneResponse> completeMission(@RequestBody @Valid MissionReqDTO.CompleteMissionsRequest completeMission) {
         MissionResDTO.SetMissionDoneResponse mission = missionService.completeMission(completeMission.userId() , completeMission.missionId());
         return ApiResponse.success(MissionSuccessCode.MISSION_COMPLETED, mission);
     }
 
     @Operation(summary = "미션 리뷰 등록", description = "미션 리뷰를 등록합니다.")
     @PostMapping("/missions/review")
-    public ApiResponse<MissionResDTO.PostMissionReviewResponse> postMissionReview(@RequestBody MissionReqDTO.PostMissionReviewRequest missionReview) {
+    public ApiResponse<MissionResDTO.PostMissionReviewResponse> postMissionReview(@RequestBody @Valid MissionReqDTO.PostMissionReviewRequest missionReview) {
         MissionResDTO.PostMissionReviewResponse mission = missionService.postMissionReview(missionReview.userId() , missionReview.missionId() , missionReview.review());
         return ApiResponse.success(MissionSuccessCode.MISSION_REVIEW_CREATED, mission);
+    }
+
+    @Operation(
+            summary = "유저 리뷰 조회",
+            description = """
+                    userId에 해당하는 리뷰를 cursor 기반 Slice로 조회합니다.
+                    sort=id는 리뷰 ID 커서(cursor 예: 13)를 사용하고, sort=score는 점수 커서(cursor 예: 5.0)를 사용합니다.
+                    cursor를 비우면 첫 페이지를 조회합니다.
+                    """
+    )
+    @PostMapping("/missions/reviews")
+    public ApiResponse<List<MissionResDTO.GetUserReviewResponse>> getUserReviews(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            name = "ID 커서 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": "13",
+                                                      "size": 10,
+                                                      "sort": "id"
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "Score 커서 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": "5.0",
+                                                      "size": 10,
+                                                      "sort": "score"
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "첫 페이지 조회",
+                                            value = """
+                                                    {
+                                                      "userId": 1,
+                                                      "cursor": null,
+                                                      "size": 10,
+                                                      "sort": "score"
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+            @RequestBody @Valid MissionReqDTO.GetUserReviewRequest request
+    ) {
+        List<MissionResDTO.GetUserReviewResponse> reviews = missionService.getUserReviews(
+                request.userId(),
+                request.cursor(),
+                request.size(),
+                request.sort()
+        );
+        return ApiResponse.success(MissionSuccessCode.MISSION_REVIEW_FOUND, reviews);
     }
 }

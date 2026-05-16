@@ -22,7 +22,7 @@ public class User {
     @Column(name = "address_code", nullable = false, length = 20)
     private String addressCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_code", referencedColumnName = "code", insertable = false, updatable = false)
     private Address address;
 
@@ -52,6 +52,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<AddressScore> addressScores;
 }

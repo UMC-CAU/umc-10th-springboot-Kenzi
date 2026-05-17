@@ -9,6 +9,7 @@ import com.example.umc10th.users.enums.UserRole;
 import com.example.umc10th.users.repository.AddressScoreRepository;
 import com.example.umc10th.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AddressScoreRepository addressScoreRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResDTO.GetInfoResponse getMe(Long userId) {
         return userRepository.findById(userId).map(user -> new UserResDTO.GetInfoResponse(
@@ -36,16 +38,28 @@ public class UserService {
     }
 
     public UserResDTO.GetInfoResponse signUp(UserReqDTO.SignupRequest reqDTO) {
-        return new UserResDTO.GetInfoResponse(
-                0L,
+        if (userRepository.existsByEmailAndDeletedAtIsNull(reqDTO.email())) {
+            throw new ProjectException(UserErrorCode.USER_ALREADY_EXISTS);
+        }
+
+        User user = userRepository.save(User.signUp(
                 reqDTO.addressCode(),
                 reqDTO.name(),
                 reqDTO.email(),
                 reqDTO.age(),
-                UserRole.USER,
-                0,
-                LocalDateTime.now(),
-                null
+                passwordEncoder.encode(reqDTO.password())
+        ));
+
+        return new UserResDTO.GetInfoResponse(
+                user.getId(),
+                user.getAddressCode(),
+                user.getName(),
+                user.getEmail(),
+                user.getAge(),
+                user.getRole(),
+                user.getPoint(),
+                user.getCreatedAt(),
+                user.getDeletedAt()
         );
     }
 

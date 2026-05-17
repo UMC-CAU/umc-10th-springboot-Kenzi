@@ -3,7 +3,9 @@ package com.example.umc10th.users.entity;
 import com.example.umc10th.reference.entity.Address;
 import com.example.umc10th.users.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -54,4 +57,18 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<AddressScore> addressScores;
+
+    private User(String addressCode, String name, String email, Integer age, String password) {
+        this.addressCode = addressCode;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+        this.role = UserRole.USER;
+        this.point = 0;
+    }
+
+    public static User signUp(String addressCode, String name, String email, Integer age, String encodedPassword) {
+        return new User(addressCode, name, email, age, encodedPassword);
+    }
 }

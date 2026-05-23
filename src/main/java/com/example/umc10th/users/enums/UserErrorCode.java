@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum UserErrorCode implements BaseErrorCode {
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND , "사용자를 찾을 수 없습니다." , "U100"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U100", "사용자를 찾을 수 없습니다."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "U101", "이미 가입된 이메일입니다."),
     ;
 
     private final HttpStatus httpStatus;

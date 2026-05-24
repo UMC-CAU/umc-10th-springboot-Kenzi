@@ -30,4 +30,12 @@ public class UserResDTO {
             String addressCode,
             Integer score
     ) {}
+
+    @Schema(name = "UserLoginResponse")
+    public record LoginResponse(
+            Long id,
+            String email,
+            UserRole role,
+            String accessToken
+    ) {}
 }

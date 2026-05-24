@@ -19,3 +19,13 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  token:
+    secretKey: ${JWT_SECRET_BASE64URL}
+    expiration:
+      access: ${JWT_ACCESS_EXPIRATION:3600000}
+
+springdoc:
+  swagger-ui:
+    path: /docs

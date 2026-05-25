@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "내 정보 조회", description = "JWT 토큰으로 내 정보를 조회합니다.")
-    @PostMapping("/me")
+    @GetMapping("/me")
     public ApiResponse<UserResDTO.GetInfoResponse> me(@AuthenticationPrincipal AuthMember authMember) {
         return ApiResponse.success(UserSuccessCode.USER_SUCCESS_FOUND, userService.getMe(authMember));
     }

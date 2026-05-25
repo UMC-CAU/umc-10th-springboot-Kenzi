@@ -26,18 +26,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
-        if (!isApiRequest(request.getRequestURI())) {
-            response.sendRedirect("/login");
-            return;
-        }
-
         response.setStatus(SecurityErrorCode.UNAUTHORIZED.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(), ApiResponse.fail(SecurityErrorCode.UNAUTHORIZED));
-    }
-
-    private boolean isApiRequest(String requestUri) {
-        return requestUri.startsWith("/api/") || requestUri.startsWith("/auth/");
     }
 }

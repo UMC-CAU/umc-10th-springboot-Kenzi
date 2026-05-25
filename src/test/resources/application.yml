@@ -10,3 +10,9 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
+
+jwt:
+  token:
+    secretKey: dW1jMTB0aC1qd3Qtc2VjcmV0LWtleS0zMmJ5dGVzISE
+    expiration:
+      access: 3600000

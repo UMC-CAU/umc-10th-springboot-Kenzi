@@ -1,8 +1,10 @@
 package com.example.umc10th.users.service;
 
+import com.example.umc10th.auth.JwtUtil;
 import com.example.umc10th.global.exception.ProjectException;
 import com.example.umc10th.users.dto.UserReqDTO;
 import com.example.umc10th.users.dto.UserResDTO;
+import com.example.umc10th.users.entity.AuthMember;
 import com.example.umc10th.users.entity.User;
 import com.example.umc10th.users.enums.UserErrorCode;
 import com.example.umc10th.users.enums.UserRole;
@@ -13,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressScoreRepository addressScoreRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public UserResDTO.GetInfoResponse getMe(Long userId) {
-        return userRepository.findById(userId).map(user -> new UserResDTO.GetInfoResponse(
+    public UserResDTO.GetInfoResponse getMe(AuthMember authMember) {
+        if (authMember == null || authMember.getUser() == null) {
+            throw new ProjectException(UserErrorCode.USER_NOT_FOUND);
+        }
+        User user = authMember.getUser();
+        return new UserResDTO.GetInfoResponse(
                 user.getId(),
                 user.getAddressCode(),
                 user.getName(),
@@ -34,7 +40,7 @@ public class UserService {
                 user.getPoint(),
                 user.getCreatedAt(),
                 user.getDeletedAt()
-        )).orElseThrow(() -> new ProjectException(UserErrorCode.USER_NOT_FOUND));
+        );
     }
 
     public UserResDTO.GetInfoResponse signUp(UserReqDTO.SignupRequest reqDTO) {
@@ -63,17 +69,21 @@ public class UserService {
         );
     }
 
-    public UserResDTO.GetInfoResponse login(UserReqDTO.LoginRequest reqDTO) {
-        return new UserResDTO.GetInfoResponse(
-                0L,
-                null,
-                null,
-                reqDTO.email(),
-                null,
-                UserRole.USER,
-                0,
-                LocalDateTime.now(),
-                null
+    public UserResDTO.LoginResponse login(UserReqDTO.LoginRequest reqDTO) {
+        User user = userRepository.findByEmailAndDeletedAtIsNull(reqDTO.email())
+                .orElseThrow(() -> new ProjectException(UserErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(reqDTO.password(), user.getPassword())) {
+            throw new ProjectException(UserErrorCode.USER_INVALID_PASSWORD);
+        }
+
+        String accessToken = jwtUtil.createAccessToken(new AuthMember(user));
+
+        return new UserResDTO.LoginResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                accessToken
         );
     }
 
